@@ -9,7 +9,7 @@
  *
  * It can:
  * 1. Calculate a cryptographic hash
- * 2. Generate a secure random cryptographic salt
+ * 2. Generate a secure random salt
  * 3. Encrypt plaintext into ciphertext
  * 4. Decrypt ciphertext into plaintext
  *
