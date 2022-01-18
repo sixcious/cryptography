@@ -25,7 +25,7 @@
  * const hash = await Cryptography.hash("plaintext", salt);
  *
  * 2. Encrypting/Decrypting:
- * Generate a secret key however you prefer (for quick demonstration purposes,this uses Cryptography.salt())
+ * Generate a secret key however you prefer (for quick demonstration purposes, this uses Cryptography.salt())
  * const secret = Cryptography.salt();
  * const encryption = await Cryptography.encrypt("plaintext", secret);
  * const decryption = await Cryptography.decrypt(encryption.ciphertext, encryption.iv, secret);
