@@ -7,15 +7,30 @@
 /**
  * Cryptography is an object responsible for various cryptographic functions.
  *
- * It can:
- * 1. Calculate a cryptographic hash
- * 2. Generate a secure random salt
- * 3. Encrypt plaintext into ciphertext
- * 4. Decrypt ciphertext into plaintext
+ * The API provides the following six features:
+ * 1. Generates a securely random number
+ * 2. Generates a securely random string
+ * 3. Calculates a cryptographic hash
+ * 4. Generates a securely random cryptographic salt
+ * 5. Encrypts plaintext into ciphertext
+ * 6. Decrypts ciphertext into plaintext
  *
  * How to use it
  * -------------
- * 1. Hashing/Salting:
+ *
+ * 1. Random Numbers:
+ * Generate a random number between a minimum and maximum value by supplying the two arguments to the function
+ *
+ * const number1 = Cryptography.randomNumber();
+ * const number2 = Cryptography.randomNumber(1, 100);
+ *
+ * 2. Random Strings:
+ * Generate a random string of any length and alphabet by supplying the two arguments to the function
+ *
+ * const string1 = Cryptography.randomString();
+ * const string2 = Cryptography.randomString(16, "abc123!");
+ *
+ * 3/4. Hashing/Salting:
  * You can use this to store hashes of sensitive data (e.g. passwords) and then run the hash function against the
  * plaintext password when it's entered again to see if it matches the hash you're storing
  * Note that you should also store the salt you used to generate the hash in your schema
@@ -23,14 +38,50 @@
  * const salt = Cryptography.salt();
  * const hash = await Cryptography.hash("plaintext", salt);
  *
- * 2. Encrypting/Decrypting:
- * Generate a secret key however you prefer (for quick demonstration purposes, this uses Cryptography.salt())
+ * 5/6. Encrypting/Decrypting:
+ * Generate a secret key however you prefer (for quick demonstration purposes,this uses Cryptography.salt())
  *
- * const secret = Cryptography.salt();
- * const encryption = await Cryptography.encrypt("plaintext", secret);
- * const decryption = await Cryptography.decrypt(encryption.ciphertext, encryption.iv, secret);
+ * const key = Cryptography.salt();
+ * const encryption = await Cryptography.encrypt("plaintext", key);
+ * const decryption = await Cryptography.decrypt(encryption.ciphertext, encryption.iv, key);
  */
 const Cryptography = (() => {
+
+  /**
+   * Generates a securely random number in the range of min (inclusive) and max (inclusive or exclusive).
+   * For example, randomNumber(0,10) will return a number between 0-10, whereas randomNumber(0,10,false) returns 0-9.
+   *
+   * @param min the minimum number in the range (inclusive)
+   * @param max the maximum number in the range (inclusive or exclusive)
+   * @param inclusive true if the maximum number is inclusive, false if exclusive
+   * @returns {number} the random number
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#getting_a_random_integer_between_two_values
+   * @see https://stackoverflow.com/a/62792582
+   * @public
+   */
+  function randomNumber(min = 0, max = 16, inclusive = true) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    const random = crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1);
+    return Math.floor(random * (max - min + (inclusive ? 1 : 0)) + min);
+  }
+
+  /**
+   * Generates a securely random string.
+   *
+   * @param length   the length the string should be
+   * @param alphabet the alphabet containing the valid characters in the string
+   * @returns {string} the random string
+   * @public
+   */
+  function randomString(length = 16, alphabet = "abcdefghijklmnopqrstuvwxyz") {
+    let result = "";
+    const alphabetLength = alphabet.length;
+    for (let i = 0; i < length; i++) {
+      result += alphabet.charAt(randomNumber(0, alphabetLength, false));
+    }
+    return result;
+  }
 
   /**
    * Calculates a cryptographic hash. We use the PBKDF2 algorithm with an Hmac-SHA512 hash function.
@@ -50,11 +101,12 @@ const Cryptography = (() => {
   /**
    * Generates a random cryptographic salt.
    *
+   * @param length the length of the generated string
    * @returns {string} the salt as a base 64 encoded string
    * @public
    */
-  function salt() {
-    return u8a2b64(crypto.getRandomValues(new Uint8Array(64)));
+  function salt(length = 64) {
+    return u8a2b64(crypto.getRandomValues(new Uint8Array(length)));
   }
 
   /**
@@ -116,6 +168,8 @@ const Cryptography = (() => {
 
   // Return public members from the Immediately Invoked Function Expression (IIFE, or "Iffy") Revealing Module Pattern (RMP)
   return {
+    randomNumber,
+    randomString,
     hash,
     salt,
     encrypt,
