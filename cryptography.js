@@ -76,9 +76,8 @@ const Cryptography = (() => {
    */
   function randomString(length = 16, alphabet = "abcdefghijklmnopqrstuvwxyz") {
     let result = "";
-    const alphabetLength = alphabet.length;
     for (let i = 0; i < length; i++) {
-      result += alphabet.charAt(randomNumber(0, alphabetLength, false));
+      result += alphabet.charAt(randomNumber(0, alphabet.length, false));
     }
     return result;
   }
