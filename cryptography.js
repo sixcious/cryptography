@@ -1,6 +1,6 @@
 /**
  * Cryptography
- * @copyright © 2020 Roy Six
+ * @copyright (c) 2020 Roy Six
  * @license https://github.com/sixcious/cryptography/blob/main/LICENSE
  */
 
