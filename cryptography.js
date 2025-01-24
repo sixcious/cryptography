@@ -1,5 +1,5 @@
 /**
- * Infy Scroll
+ * Cryptography
  * @copyright (c) 2020 Roy Six
  * @license https://github.com/sixcious/cryptography/blob/main/LICENSE
  */
